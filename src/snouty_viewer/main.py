@@ -1,3 +1,5 @@
+import sys
+
 import napari
 import numpy as np
 import im_container
@@ -19,13 +21,14 @@ def interpolated_view(im: im_container.Im):
     im_out = np.zeros((num_t, num_c, num_y_new, num_z_new, num_x), dtype=im_raw.dtype)
     swapped = np.swapaxes(im_raw, 2, 3)
     for t in range(num_t):
-        print(t, num_t)
+        sys.stdout.write(f"\r[INFO] Interpolating volume {t+1} of {num_t}...")
+        sys.stdout.flush()
         for c in range(num_c):
             for x in range(num_x):
                 im_out[t, c, :, :, x] = skimage.transform.warp(swapped[t, c, :, :, x], tform.inverse,
                                                                preserve_range=True,
                                                                output_shape=(num_y_new, num_z_new),
-                                                               order=3)
+                                                               order=3)  # order 3 seems to be fastest
     return im_out
 
 
@@ -56,7 +59,7 @@ if __name__ == "__main__":
     scale = (z_ratio, 1, 1)
 
     viewer = napari.Viewer()
-    viewer.add_image(im_raw[:, 0, ...]+1, scale=scale, contrast_limits=(0, 2000), colormap='viridis')
-    viewer.add_image(im_translated[:, 0, ...]+1, scale=scale, contrast_limits=(0, 2000), colormap='viridis')
+    viewer.add_image(im_raw[:, 0, ...], scale=scale, contrast_limits=(0, 2000), colormap='viridis')
+    viewer.add_image(im_translated[:, 0, ...], scale=scale, contrast_limits=(0, 2000), colormap='viridis')
     viewer.add_image(im_interpolated[:, 0, ...], contrast_limits=(0, 2000), colormap='viridis')
     napari.run()
