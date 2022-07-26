@@ -1,7 +1,12 @@
 import os
 
-import numpy as np
 from tifffile import tifffile
+try:
+    import cupy as np
+    from cupyx.scipy import ndimage as ndi
+except ModuleNotFoundError:
+    import numpy as np
+    from scipy import ndimage as ndi
 
 
 class Im:

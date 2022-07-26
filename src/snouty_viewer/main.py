@@ -69,7 +69,7 @@ if __name__ == "__main__":
     print(f'[INFO] Native view image loaded in {d-c}s.')
     im_traditional = traditional_view(im_info)
     e = time.time()
-    print(f'[INFO] Native view image loaded in {e-d}s.')
+    print(f'Native view image loaded in {e-d}s.')
     scale = (float(im_info.metadata['voxel_aspect_ratio']), 1, 1)
     print('[INFO] Done')
 
