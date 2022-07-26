@@ -4,9 +4,11 @@ import time
 try:
     import cupy as np
     from cupyx.scipy import ndimage as ndi
+    print("[INFO] Using GPU.")
 except ModuleNotFoundError:
     import numpy as np
     from scipy import ndimage as ndi
+    print("[INFO] Using CPU.")
 
 
 def traditional_view(im: im_container.Im):  # a little smaller than native view, but much slower
@@ -49,7 +51,8 @@ def native_view(im: im_container.Im):  # a little bigger than traditional view, 
 
 
 if __name__ == "__main__":
-    TOP_DIR = "/Users/austin/test_files/snouty_raw/2022-04-21_16-52-33_000_mitotracker_ER-mEmerald/"
+    # TOP_DIR = "/Users/austin/test_files/snouty_raw/2022-04-21_16-52-33_000_mitotracker_ER-mEmerald/"
+    TOP_DIR = "/home/austin/Data/In/snouty_test"
     IM_NAME = "000000"
 
     im_info = im_container.Im(TOP_DIR, IM_NAME)
