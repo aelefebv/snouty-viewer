@@ -41,6 +41,7 @@ def traditional_view(im: im_container.Im):  # a little smaller than native view,
                 im_out[t, c, ...] = temp2[start_z:(start_z+new_z), ...].get()
             else:
                 im_out[t, c, ...] = temp2[start_z:(start_z + new_z), ...]
+    print()
     return im_out
 
 
@@ -78,7 +79,7 @@ if __name__ == "__main__":
     print(f'[INFO] Native view image loaded in {d-g}s.')
     im_traditional = traditional_view(im_info)
     e = time.time()
-    print(f'Native view image loaded in {e-d}s.')
+    print(f'[INFO] Traditional view image loaded in {e-d}s.')
     scale = (float(im_info.metadata['voxel_aspect_ratio']), 1, 1)
     print('[INFO] Done')
 
