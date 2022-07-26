@@ -1,9 +1,13 @@
 import sys
-
 import napari
-import numpy as np
 import im_container
-import scipy.ndimage
+import time
+try:
+    import cupy as np
+    from cupyx.scipy import ndimage as ndi
+except ModuleNotFoundError:
+    import numpy as np
+    from scipy import ndimage as ndi
 
 
 def traditional_view(im: im_container.Im):  # a little smaller than native view, but much slower
@@ -25,9 +29,9 @@ def traditional_view(im: im_container.Im):  # a little smaller than native view,
         sys.stdout.write(f"\r[INFO] Interpolating volume {t+1} of {num_t}...")
         sys.stdout.flush()
         for c in range(num_c):
-            temp1 = scipy.ndimage.zoom(im_translated[t, c, ...], zoom=(z_ratio, 1, 1),
+            temp1 = ndi.zoom(im_translated[t, c, ...], zoom=(z_ratio, 1, 1),
                                        order=1, prefilter=True)
-            temp2 = scipy.ndimage.rotate(temp1, np.rad2deg(rotation_angle),
+            temp2 = ndi.rotate(temp1, np.rad2deg(rotation_angle),
                                          order=1, prefilter=True, reshape=True)
             im_out[t, c, ...] = temp2[start_z:(start_z+new_z), ...]
     return im_out
@@ -51,15 +55,24 @@ if __name__ == "__main__":
 
     im_info = im_container.Im(TOP_DIR, IM_NAME)
 
+    a = time.time()
     im_original = im_info.load_raw()
+    b = time.time()
+    print(f'[INFO] Raw image loaded in {b-a}s.')
     im_preview = im_info.load_preview()
+    c = time.time()
     im_native = native_view(im_info)
+    print(f'[INFO] Preview image loaded in {c-b}s.')
+    d = time.time()
+    print(f'[INFO] Native view image loaded in {d-c}s.')
     im_traditional = traditional_view(im_info)
-
+    e = time.time()
+    print(f'[INFO] Native view image loaded in {e-d}s.')
     scale = (float(im_info.metadata['voxel_aspect_ratio']), 1, 1)
+    print('[INFO] Done')
 
-    viewer = napari.Viewer()
-    viewer.add_image(im_original[:, 0, ...]+1, scale=scale, colormap='viridis', name='original')
-    viewer.add_image(im_native[:, 0, ...]+1, scale=scale, colormap='viridis', name='native')
-    viewer.add_image(im_traditional[:, 0, ...]+1, colormap='viridis', name='traditional')
-    napari.run()
+    # viewer = napari.Viewer()
+    # viewer.add_image(im_original[:, 0, ...]+1, scale=scale, colormap='viridis', name='original')
+    # viewer.add_image(im_native[:, 0, ...]+1, scale=scale, colormap='viridis', name='native')
+    # viewer.add_image(im_traditional[:, 0, ...]+1, colormap='viridis', name='traditional')
+    # napari.run()
