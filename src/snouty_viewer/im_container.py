@@ -30,8 +30,8 @@ class Im:
         tczyx = np.swapaxes(loaded_im, 1, 2)  # flips to TCZYX for Napari
         if remove_timebar:
             tczyx = tczyx[..., 8:, :]
-        return tczyx
+        return np.asarray(tczyx)
 
     def load_preview(self):
         loaded_im = tifffile.imread(self.preview_path)
-        return loaded_im
+        return np.asarray(loaded_im)
