@@ -1,5 +1,4 @@
 import sys
-import napari
 import im_container
 import time
 try:
@@ -71,6 +70,7 @@ if __name__ == "__main__":
     scale = (float(im_info.metadata['voxel_aspect_ratio']), 1, 1)
     print('[INFO] Done')
 
+    # import napari
     # viewer = napari.Viewer()
     # viewer.add_image(im_original[:, 0, ...]+1, scale=scale, colormap='viridis', name='original')
     # viewer.add_image(im_native[:, 0, ...]+1, scale=scale, colormap='viridis', name='native')
