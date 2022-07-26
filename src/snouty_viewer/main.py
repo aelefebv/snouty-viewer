@@ -5,10 +5,12 @@ import numpy as np
 try:
     import cupy as xp
     from cupyx.scipy import ndimage as ndi
+    use_gpu = True
     print("[INFO] Using GPU.")
 except ModuleNotFoundError:
     xp = np
     from scipy import ndimage as ndi
+    use_gpu = False
     print("[INFO] Using CPU.")
 
 
@@ -35,7 +37,10 @@ def traditional_view(im: im_container.Im):  # a little smaller than native view,
                                        order=1, prefilter=True)
             temp2 = ndi.rotate(temp1, xp.rad2deg(rotation_angle),
                                          order=1, prefilter=True, reshape=True)
-            im_out[t, c, ...] = np.asarray(temp2[start_z:(start_z+new_z), ...])
+            if use_gpu:
+                im_out[t, c, ...] = temp2[start_z:(start_z+new_z), ...].get()
+            else:
+                im_out[t, c, ...] = temp2[start_z:(start_z + new_z), ...]
     return im_out
 
 
@@ -48,12 +53,15 @@ def native_view(im: im_container.Im):  # a little bigger than traditional view, 
     for z in range(num_z):
         deshear_shift = int(xp.rint(z * scan_step_size_px))
         im_desheared[:, :, z, deshear_shift:(deshear_shift + num_y), :] = im_raw[:, :, z, :, :]
-    return np.asarray(im_desheared)
+    if use_gpu:
+        return im_desheared.get()
+    else:
+        return im_desheared
 
 
 if __name__ == "__main__":
-    # TOP_DIR = "/Users/austin/test_files/snouty_raw/2022-04-21_16-52-33_000_mitotracker_ER-mEmerald/"
-    TOP_DIR = "/home/austin/Data/In/snouty_test"
+    TOP_DIR = "/Users/austin/test_files/snouty_raw/2022-04-21_16-52-33_000_mitotracker_ER-mEmerald/"
+    # TOP_DIR = "/home/austin/Data/In/snouty_test"
     IM_NAME = "000000"
 
     im_info = im_container.Im(TOP_DIR, IM_NAME)
@@ -63,16 +71,17 @@ if __name__ == "__main__":
     b = time.time()
     print(f'[INFO] Raw image loaded in {b-a}s.')
     im_preview = im_info.load_preview()
-    c = time.time()
+    g = time.time()
     im_native = native_view(im_info)
-    print(f'[INFO] Preview image loaded in {c-b}s.')
+    print(f'[INFO] Preview image loaded in {g-b}s.')
     d = time.time()
-    print(f'[INFO] Native view image loaded in {d-c}s.')
+    print(f'[INFO] Native view image loaded in {d-g}s.')
     im_traditional = traditional_view(im_info)
     e = time.time()
     print(f'Native view image loaded in {e-d}s.')
     scale = (float(im_info.metadata['voxel_aspect_ratio']), 1, 1)
     print('[INFO] Done')
+
 
     # import napari
     # viewer = napari.Viewer()
