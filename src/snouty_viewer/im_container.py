@@ -1,11 +1,12 @@
 import os
 
 from tifffile import tifffile
+import numpy as np
 try:
-    import cupy as np
+    import cupy as xp
     from cupyx.scipy import ndimage as ndi
 except ModuleNotFoundError:
-    import numpy as np
+    xp = np
     from scipy import ndimage as ndi
 
 
@@ -30,8 +31,8 @@ class Im:
         tczyx = np.swapaxes(loaded_im, 1, 2)  # flips to TCZYX for Napari
         if remove_timebar:
             tczyx = tczyx[..., 8:, :]
-        return np.asarray(tczyx)
+        return xp.asarray(tczyx)
 
     def load_preview(self):
         loaded_im = tifffile.imread(self.preview_path)
-        return np.asarray(loaded_im)
+        return xp.asarray(loaded_im)
