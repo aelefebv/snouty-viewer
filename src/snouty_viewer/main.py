@@ -1,5 +1,10 @@
+import os
 import sys
-import im_container
+from glob import glob
+
+from tifffile import tifffile
+
+from src.snouty_viewer import im_container
 import time
 import numpy as np
 try:
@@ -60,33 +65,84 @@ def native_view(im: im_container.Im):  # a little bigger than traditional view, 
         return im_desheared
 
 
+def assign_memmory(dir_in, save_dir, format='native', save_name=None):
+    file_list = glob(os.path.join(dir_in, 'data', '*.tif'))
+    num_files = len(file_list)
+    frame_info = im_container.Im(dir_in, '000000')
+    if format == 'raw':
+        first_frame = frame_info.load_raw()
+    elif format == 'native':
+        first_frame = native_view(frame_info)
+    elif format == 'traditional':
+        first_frame = traditional_view(frame_info)
+    else:
+        print(f"[INFO] Format {format} is not a valid view type.")
+        return
+    dimension_order = 'TCZYX'
+    shape = (num_files + first_frame.shape[0],) + first_frame.shape[1:]
+    if save_name is None:
+        save_name = 'merged'
+    save_path = os.path.join(save_dir, save_name + f'-{format}.tif')
+    tifffile.imwrite(save_path, shape=shape, dtype=first_frame.dtype, metadata={"axes": dimension_order})
+    return save_path
+
+
+def stitch_and_save(dir_in, save_dir, format='native'):
+    save_path = assign_memmory(dir_in, save_dir, format=format)
+    memmap = tifffile.memmap(save_path)
+    file_list = glob(os.path.join(dir_in, 'data', '*.tif'))
+    memmap_start = 0
+    for file in file_list:
+        im_number = file.split('.tif')[-2][-6:]
+        im_info = im_container.Im(dir_in, im_number)
+        if format == 'raw':
+            im = im_info.load_raw()
+        elif format == 'native':
+            im = native_view(im_info)
+        elif format == 'traditional':
+            im = traditional_view(im_info)
+        else:
+            print(f"[INFO] Format {format} is not a valid view type.")
+            return
+        memmap_end = memmap_start + im.shape[0]
+        print(im_number)
+        memmap[memmap_start:memmap_end, ...] = im
+        memmap_start = memmap_end
+    return save_path
+
+
 if __name__ == "__main__":
-    # TOP_DIR = "/Users/austin/test_files/snouty_raw/2022-04-21_16-52-33_000_mitotracker_ER-mEmerald/"
-    TOP_DIR = "/home/austin/Data/In/snouty_test"
-    IM_NAME = "000000"
+    dir_in = 'C:\\Users\\austin\\test_files\\2022-07-26_11-05-01_000_Oligomycin_5min'
+    save_dir = dir_in
+    stitch_and_save(dir_in, save_dir)
 
-    im_info = im_container.Im(TOP_DIR, IM_NAME)
-
-    a = time.time()
-    im_original = im_info.load_raw()
-    b = time.time()
-    print(f'[INFO] Raw image loaded in {b-a}s.')
-    im_preview = im_info.load_preview()
-    g = time.time()
-    im_native = native_view(im_info)
-    print(f'[INFO] Preview image loaded in {g-b}s.')
-    d = time.time()
-    print(f'[INFO] Native view image loaded in {d-g}s.')
-    im_traditional = traditional_view(im_info)
-    e = time.time()
-    print(f'[INFO] Traditional view image loaded in {e-d}s.')
-    scale = (float(im_info.metadata['voxel_aspect_ratio']), 1, 1)
-    print('[INFO] Done')
-
-
+    # TOP_DIR = "C:\\Users\\austin\\test_files\\2022-07-26_15-51-21_000_all_treatments_1hr_v2"
+    # # TOP_DIR = "/Users/austin/test_files/snouty_raw/2022-04-21_16-52-33_000_mitotracker_ER-mEmerald/"
+    # # TOP_DIR = "/home/austin/Data/In/snouty_test"
+    # IM_NAME = "000000"
+    #
+    # im_info = im_container.Im(TOP_DIR, IM_NAME)
+    #
+    # a = time.time()
+    # im_original = im_info.load_raw()
+    # b = time.time()
+    # print(f'[INFO] Raw image loaded in {b-a}s.')
+    # im_preview = im_info.load_preview()
+    # g = time.time()
+    # im_native = native_view(im_info)
+    # print(f'[INFO] Preview image loaded in {g-b}s.')
+    # d = time.time()
+    # print(f'[INFO] Native view image loaded in {d-g}s.')
+    # im_traditional = traditional_view(im_info)
+    # e = time.time()
+    # print(f'[INFO] Traditional view image loaded in {e-d}s.')
+    # scale = (float(im_info.metadata['voxel_aspect_ratio']), 1, 1)
+    # print('[INFO] Done')
+    #
+    #
     # import napari
     # viewer = napari.Viewer()
-    # viewer.add_image(im_original[:, 0, ...]+1, scale=scale, colormap='viridis', name='original')
+    # viewer.add_image(im_original[:, 0, ...].get()+1, scale=scale, colormap='viridis', name='original')
     # viewer.add_image(im_native[:, 0, ...]+1, scale=scale, colormap='viridis', name='native')
     # viewer.add_image(im_traditional[:, 0, ...]+1, colormap='viridis', name='traditional')
     # napari.run()
