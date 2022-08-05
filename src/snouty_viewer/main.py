@@ -79,7 +79,7 @@ def assign_memmory(dir_in, save_dir, format='native', save_name=None):
         print(f"[INFO] Format {format} is not a valid view type.")
         return
     dimension_order = 'TCZYX'
-    shape = (num_files + first_frame.shape[0],) + first_frame.shape[1:]
+    shape = (num_files * first_frame.shape[0],) + first_frame.shape[1:]
     if save_name is None:
         save_name = 'merged'
     save_path = os.path.join(save_dir, save_name + f'-{format}.tif')
@@ -112,9 +112,12 @@ def stitch_and_save(dir_in, save_dir, format='native'):
 
 
 if __name__ == "__main__":
-    dir_in = 'C:\\Users\\austin\\test_files\\2022-07-26_11-05-01_000_Oligomycin_5min'
-    save_dir = dir_in
-    stitch_and_save(dir_in, save_dir)
+    root_dir = 'C:\\Users\\austin\\test_files\\gav'
+    dir_list = os.listdir(root_dir)
+    for sub_dir in dir_list:
+        sub_dir_full = os.path.join(root_dir, sub_dir)
+        save_dir = sub_dir_full
+        stitch_and_save(sub_dir_full, save_dir)
 
     # TOP_DIR = "C:\\Users\\austin\\test_files\\2022-07-26_15-51-21_000_all_treatments_1hr_v2"
     # # TOP_DIR = "/Users/austin/test_files/snouty_raw/2022-04-21_16-52-33_000_mitotracker_ER-mEmerald/"
