@@ -4,7 +4,7 @@ contributions:
   commands:
     - id: snouty-viewer.get_reader
       python_name: snouty_viewer._reader:napari_get_reader
-      title: Open data with Snouty Viewer
+      title: Open snouty data
     - id: snouty-viewer.write_multiple
       python_name: snouty_viewer._writer:write_multiple
       title: Save multi-layer data with Snouty Viewer
@@ -25,8 +25,8 @@ contributions:
       title: Make example function widget
   readers:
     - command: snouty-viewer.get_reader
-      accepts_directories: false
-      filename_patterns: ['*.npy']
+      accepts_directories: true
+      filename_patterns: []
   writers:
     - command: snouty-viewer.write_multiple
       layer_types: ['image*','labels*']

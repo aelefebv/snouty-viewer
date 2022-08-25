@@ -67,6 +67,7 @@ def native_view(im: im_container.Im):  # a little bigger than traditional view, 
 
 def assign_memmory(dir_in, save_dir, format='native', save_name=None):
     file_list = glob(os.path.join(dir_in, 'data', '*.tif'))
+    file_list.sort()
     num_files = len(file_list)
     frame_info = im_container.Im(dir_in, '000000')
     if format == 'raw':
@@ -91,6 +92,7 @@ def stitch_and_save(dir_in, save_dir, format='native'):
     save_path = assign_memmory(dir_in, save_dir, format=format)
     memmap = tifffile.memmap(save_path)
     file_list = glob(os.path.join(dir_in, 'data', '*.tif'))
+    file_list.sort()
     memmap_start = 0
     for file in file_list:
         im_number = file.split('.tif')[-2][-6:]
@@ -112,9 +114,10 @@ def stitch_and_save(dir_in, save_dir, format='native'):
 
 
 if __name__ == "__main__":
-    root_dir = 'C:\\Users\\austin\\test_files\\gav'
+    root_dir = '/Users/austin/test_files/snouty_raw'
     dir_list = os.listdir(root_dir)
-    for sub_dir in dir_list:
+
+    for sub_dir in dir_list[1:]:
         sub_dir_full = os.path.join(root_dir, sub_dir)
         save_dir = sub_dir_full
         stitch_and_save(sub_dir_full, save_dir)

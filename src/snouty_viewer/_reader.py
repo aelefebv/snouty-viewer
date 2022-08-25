@@ -5,7 +5,13 @@ It implements the Reader specification, but your plugin may choose to
 implement multiple readers or even other plugin contributions. see:
 https://napari.org/plugins/guides.html?#readers
 """
-import numpy as np
+import glob
+import os.path
+
+import dask
+import dask.array as da
+import tifffile
+from napari.utils import progress
 
 
 def napari_get_reader(path):
@@ -22,17 +28,9 @@ def napari_get_reader(path):
         If the path is a recognized format, return a function that accepts the
         same path or list of paths, and returns a list of layer data tuples.
     """
-    if isinstance(path, list):
-        # reader plugins may be handed single path, or a list of paths.
-        # if it is a list, it is assumed to be an image stack...
-        # so we are only going to look at the first file.
-        path = path[0]
-
-    # if we know we cannot read the file, we immediately return None.
-    if not path.endswith(".npy"):
+    path = os.path.abspath(path)
+    if not os.path.isdir(path):
         return None
-
-    # otherwise we return the *function* that can read ``path``.
     return reader_function
 
 
@@ -59,14 +57,39 @@ def reader_function(path):
         default to layer_type=="image" if not provided
     """
     # handle both a string and a list of strings
-    paths = [path] if isinstance(path, str) else path
-    # load all files into array
-    arrays = [np.load(_path) for _path in paths]
-    # stack arrays into single array
-    data = np.squeeze(np.stack(arrays))
+    data_path = os.path.join(path, 'data')
+    data_tifs = glob.glob(os.path.join(data_path, '*.tif'))
+    data_tifs.sort()
+    with tifffile.TiffFile(data_tifs[0]) as tif:
+        metadata = tif.imagej_metadata
+        xy_shape = tif.pages[0].shape
+        im_dtype = tif.pages[0].dtype
+    # volumes_in_file = metadata['frames']
+    # num_volumes = volumes_in_file * num_ims
+    num_volumes = metadata['frames']
+    num_channels = metadata['channels']
+    num_z = metadata['slices']
 
-    # optional kwargs for the corresponding viewer.add_* method
-    add_kwargs = {}
+    im_shape = (num_volumes, num_z,) + xy_shape
 
-    layer_type = "image"  # optional, default is "image"
-    return [(data, add_kwargs, layer_type)]
+    @dask.delayed
+    def load_tif(im_path, ch):
+        with tifffile.TiffFile(im_path) as tif_frame:
+            im_frame = tif_frame.asarray()[:, :, ch, ...]
+        return im_frame
+
+    def load_channel(all_tifs, ch):
+        im_channel = da.zeros(shape=im_shape, dtype=im_dtype)
+        for tif_frame in progress(all_tifs):
+            im = da.from_delayed(load_tif(tif_frame, ch), shape=im_shape, dtype=im_dtype)
+            im_channel = da.append(im_channel, im, axis=0)
+        im_channel = im_channel.rechunk({0: 1})
+        layer_type = "image"
+        layer_name = path.rsplit(os.sep)[-2]
+        add_kwargs = {"name": f'ch{ch}_' + layer_name}
+        return im_channel, add_kwargs, layer_type
+
+    im_tuples = []
+    for channel in range(num_channels):
+        im_tuples.append(load_channel(data_tifs, channel))
+    return im_tuples
