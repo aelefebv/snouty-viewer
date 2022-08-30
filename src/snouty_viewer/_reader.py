@@ -62,6 +62,7 @@ def reader_function(path):
     data_tifs.sort()
     with tifffile.TiffFile(data_tifs[0]) as tif:
         metadata = tif.imagej_metadata
+        print(metadata)
         xy_shape = tif.pages[0].shape
         im_dtype = tif.pages[0].dtype
     # volumes_in_file = metadata['frames']

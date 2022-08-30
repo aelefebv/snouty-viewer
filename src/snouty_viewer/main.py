@@ -46,6 +46,7 @@ def traditional_view(im: im_container.Im):  # a little smaller than native view,
                 im_out[t, c, ...] = temp2[start_z:(start_z+new_z), ...].get()
             else:
                 im_out[t, c, ...] = temp2[start_z:(start_z + new_z), ...]
+            return im_out
     print()
     return im_out
 
@@ -114,41 +115,41 @@ def stitch_and_save(dir_in, save_dir, format='native'):
 
 
 if __name__ == "__main__":
-    root_dir = '/Users/austin/test_files/snouty_raw'
-    dir_list = os.listdir(root_dir)
-
-    for sub_dir in dir_list[1:]:
-        sub_dir_full = os.path.join(root_dir, sub_dir)
-        save_dir = sub_dir_full
-        stitch_and_save(sub_dir_full, save_dir)
+    # root_dir = '/Users/austin/test_files/snouty_raw'
+    # dir_list = os.listdir(root_dir)
+    #
+    # for sub_dir in dir_list[1:]:
+    #     sub_dir_full = os.path.join(root_dir, sub_dir)
+    #     save_dir = sub_dir_full
+    #     stitch_and_save(sub_dir_full, save_dir)
 
     # TOP_DIR = "C:\\Users\\austin\\test_files\\2022-07-26_15-51-21_000_all_treatments_1hr_v2"
-    # # TOP_DIR = "/Users/austin/test_files/snouty_raw/2022-04-21_16-52-33_000_mitotracker_ER-mEmerald/"
-    # # TOP_DIR = "/home/austin/Data/In/snouty_test"
-    # IM_NAME = "000000"
+    TOP_DIR = "/Users/austin/test_files/snouty_raw/2022-04-21_16-52-33_000_mitotracker_ER-mEmerald/"
+    # TOP_DIR = "/home/austin/Data/In/snouty_test"
+    IM_NAME = "000000"
     #
-    # im_info = im_container.Im(TOP_DIR, IM_NAME)
+    im_info = im_container.Im(TOP_DIR, IM_NAME)
     #
     # a = time.time()
-    # im_original = im_info.load_raw()
+    im_original = im_info.load_raw()
     # b = time.time()
     # print(f'[INFO] Raw image loaded in {b-a}s.')
     # im_preview = im_info.load_preview()
     # g = time.time()
-    # im_native = native_view(im_info)
+    im_native = native_view(im_info)
     # print(f'[INFO] Preview image loaded in {g-b}s.')
     # d = time.time()
     # print(f'[INFO] Native view image loaded in {d-g}s.')
-    # im_traditional = traditional_view(im_info)
+    im_traditional = traditional_view(im_info)
     # e = time.time()
     # print(f'[INFO] Traditional view image loaded in {e-d}s.')
-    # scale = (float(im_info.metadata['voxel_aspect_ratio']), 1, 1)
+    scale = (float(im_info.metadata['voxel_aspect_ratio']), 1, 1)
     # print('[INFO] Done')
     #
     #
-    # import napari
-    # viewer = napari.Viewer()
-    # viewer.add_image(im_original[:, 0, ...].get()+1, scale=scale, colormap='viridis', name='original')
-    # viewer.add_image(im_native[:, 0, ...]+1, scale=scale, colormap='viridis', name='native')
-    # viewer.add_image(im_traditional[:, 0, ...]+1, colormap='viridis', name='traditional')
+    import napari
+    viewer = napari.Viewer()
+    viewer.add_image(im_original[:, 0, ...], scale=scale, colormap='viridis', name='original')
+    viewer.add_image(im_native[:, 0, ...]+1, scale=scale, colormap='viridis', name='native')
+    viewer.add_image(im_traditional[:, 0, ...]+1, colormap='viridis', name='traditional')
     # napari.run()
