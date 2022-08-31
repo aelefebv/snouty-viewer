@@ -1,10 +1,7 @@
 import glob
 import os.path
 
-import dask
-import dask.array as da
 import tifffile
-from napari.utils import progress
 import numpy as np
 
 

@@ -29,7 +29,3 @@ def write_single_image(path: str, layer: Any, meta: dict):
     worker = save_im(layer, save_path, meta)
     worker.start()
     return save_path
-
-
-def write_multiple(path: str, data: List[FullLayerData]):
-    """Writes multiple layers of different types."""

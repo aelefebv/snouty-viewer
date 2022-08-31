@@ -5,44 +5,20 @@ contributions:
     - id: snouty-viewer.get_reader
       python_name: snouty_viewer._reader:napari_get_reader
       title: Open snouty data
-    - id: snouty-viewer.write_multiple
-      python_name: snouty_viewer._writer:write_multiple
-      title: Save multi-layer data with Snouty Viewer
     - id: snouty-viewer.write_single_image
       python_name: snouty_viewer._writer:write_single_image
       title: Save image data with Snouty Viewer
-    - id: snouty-viewer.make_sample_data
-      python_name: snouty_viewer._sample_data:make_sample_data
-      title: Load sample data from Snouty Viewer
-    - id: snouty-viewer.make_qwidget
-      python_name: snouty_viewer._widget:ExampleQWidget
-      title: Make example QWidget
     - id: snouty-viewer.make_magic_widget
       python_name: snouty_viewer._widget:native_view
       title: Convert raw snouty data to its native view
-    - id: snouty-viewer.make_func_widget
-      python_name: snouty_viewer._widget:example_function_widget
-      title: Make example function widget
   readers:
     - command: snouty-viewer.get_reader
       accepts_directories: true
       filename_patterns: []
   writers:
-    - command: snouty-viewer.write_multiple
-      layer_types: ['image*','labels*']
-      filename_extensions: []
     - command: snouty-viewer.write_single_image
       layer_types: ['image']
       filename_extensions: ['.tif']
-  sample_data:
-    - command: snouty-viewer.make_sample_data
-      display_name: Snouty Viewer
-      key: unique_id.1
   widgets:
-    - command: snouty-viewer.make_qwidget
-      display_name: Example QWidget
     - command: snouty-viewer.make_magic_widget
       display_name: Native View
-    - command: snouty-viewer.make_func_widget
-      autogenerate: true
-      display_name: Example Function Widget

@@ -29,10 +29,12 @@ class Im:
     def load_raw(self, remove_timebar=True):
         loaded_im = tifffile.imread(self.raw_path)  # reads in as TZCYX
         swap = True
+        if len(loaded_im.shape == 4):
+            loaded_im = np.swapaxes(loaded_im, 0, 1)
         while len(loaded_im.shape) < 5:
-            swap = False
+            swap = ~swap
             loaded_im = np.expand_dims(loaded_im, axis=0)
-        if swap:
+        if swap is True:
             tczyx = np.swapaxes(loaded_im, 1, 2)  # flips to TCZYX for Napari
         else:
             tczyx = loaded_im
