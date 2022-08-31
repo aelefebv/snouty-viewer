@@ -4,8 +4,7 @@ from glob import glob
 
 from tifffile import tifffile
 
-from src.snouty_viewer import im_container
-import time
+from snouty_viewer import im_container
 import numpy as np
 try:
     import cupy as xp

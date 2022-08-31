@@ -34,19 +34,19 @@ class ExampleQWidget(QWidget):
         print("napari has", len(self.viewer.layers), "layers")
 
 
-@magic_factory
-def native_view(im: im_container.Im):  # a little bigger than traditional view, but much faster
-    num_t, num_c, num_z, num_y, num_x = im_raw.shape
-    scan_step_size_px = int(im.metadata['scan_step_size_px'])
-    max_deshear_shift = int(xp.rint(scan_step_size_px * (num_z - 1)))
-    im_desheared = xp.zeros((num_t, num_c, num_z, num_y + max_deshear_shift, num_x), im_raw.dtype)
-    for z in range(num_z):
-        deshear_shift = int(xp.rint(z * scan_step_size_px))
-        im_desheared[:, :, z, deshear_shift:(deshear_shift + num_y), :] = im_raw[:, :, z, :, :]
-    if use_gpu:
-        return im_desheared.get()
-    else:
-        return im_desheared
+# @magic_factory
+# def native_view(im: im_container.Im):  # a little bigger than traditional view, but much faster
+#     num_t, num_c, num_z, num_y, num_x = im_raw.shape
+#     scan_step_size_px = int(im.metadata['scan_step_size_px'])
+#     max_deshear_shift = int(xp.rint(scan_step_size_px * (num_z - 1)))
+#     im_desheared = xp.zeros((num_t, num_c, num_z, num_y + max_deshear_shift, num_x), im_raw.dtype)
+#     for z in range(num_z):
+#         deshear_shift = int(xp.rint(z * scan_step_size_px))
+#         im_desheared[:, :, z, deshear_shift:(deshear_shift + num_y), :] = im_raw[:, :, z, :, :]
+#     if use_gpu:
+#         return im_desheared.get()
+#     else:
+#         return im_desheared
 
 
 # Uses the `autogenerate: true` flag in the plugin manifest

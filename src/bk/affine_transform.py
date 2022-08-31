@@ -1,4 +1,4 @@
-import im_container
+from snouty_viewer import im_container
 import numpy as np
 import skimage.transform
 import sys
