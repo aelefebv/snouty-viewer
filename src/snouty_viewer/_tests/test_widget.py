@@ -3,19 +3,18 @@ import numpy as np
 from snouty_viewer import native_view
 
 
-# make_napari_viewer is a pytest fixture that returns a napari viewer object
-# capsys is a pytest fixture that captures stdout and stderr output streams
+def test_example_magic_widget(make_napari_viewer):
+    viewer = make_napari_viewer()
+    layer = viewer.add_image(np.random.random((20, 20, 20)))
+    layer.metadata["snouty_metadata"] = {"scan_step_size_px": 3}
+    deshear_size = 3 * 19
+    out_size = (1, 20, 20 + deshear_size, 20)
 
-# def test_example_magic_widget(make_napari_viewer, capsys):
-#     viewer = make_napari_viewer()
-#     layer = viewer.add_image(np.random.random((100, 100)))
-#
-#     # this time, our widget will be a MagicFactory or FunctionGui instance
-#     my_widget = native_view()
-#
-#     # if we "call" this object, it'll execute our function
-#     my_widget(viewer.layers[0])
-#
-#     # read captured output and check that it's as we expected
-#     captured = capsys.readouterr()
-#     assert captured.out == f"you have selected {layer}\n"
+    # this time, our widget will be a MagicFactory or FunctionGui instance
+    my_widget = native_view()
+
+    # if we "call" this object, it'll execute our function
+    output_layer = my_widget(viewer.layers[0])
+
+    # read captured output and check that it's as we expected
+    assert output_layer[0].shape == out_size
