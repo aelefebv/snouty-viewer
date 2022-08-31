@@ -1,6 +1,0 @@
-cupy-cuda116==10.6.0
-fastrlock==0.8
-numpy==1.23.1
-scipy==1.8.1
-tifffile==2022.5.4
-tiffile==2018.10.18
