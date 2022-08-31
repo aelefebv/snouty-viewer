@@ -18,8 +18,8 @@ contributions:
       python_name: snouty_viewer._widget:ExampleQWidget
       title: Make example QWidget
     - id: snouty-viewer.make_magic_widget
-      python_name: snouty_viewer._widget:example_magic_widget
-      title: Make example magic widget
+      python_name: snouty_viewer._widget:native_view
+      title: Convert raw snouty data to its native view
     - id: snouty-viewer.make_func_widget
       python_name: snouty_viewer._widget:example_function_widget
       title: Make example function widget
@@ -33,7 +33,7 @@ contributions:
       filename_extensions: []
     - command: snouty-viewer.write_single_image
       layer_types: ['image']
-      filename_extensions: ['.npy']
+      filename_extensions: ['.tif']
   sample_data:
     - command: snouty-viewer.make_sample_data
       display_name: Snouty Viewer
@@ -42,7 +42,7 @@ contributions:
     - command: snouty-viewer.make_qwidget
       display_name: Example QWidget
     - command: snouty-viewer.make_magic_widget
-      display_name: Example Magic Widget
+      display_name: Native View
     - command: snouty-viewer.make_func_widget
       autogenerate: true
       display_name: Example Function Widget

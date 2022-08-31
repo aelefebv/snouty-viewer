@@ -64,15 +64,15 @@ def reader_function(path):
     num_z = int(metadata['slices_per_volume'])
     print("[INFO] Number of slices: ", num_z)
 
-    im_shape = (num_volumes, num_z,) + xy_shape
+    im_shape = (num_volumes, num_z, xy_shape[0]-8, xy_shape[1])
 
     # @dask.delayed
     def load_tif(im_path, ch):
         with tifffile.TiffFile(im_path) as tif_frame:
             if ch == -1:
-                im_frame = tif_frame.asarray()
+                im_frame = tif_frame.asarray()[:, 8:, :]
             else:
-                im_frame = tif_frame.asarray()[:, :, ch, ...]
+                im_frame = tif_frame.asarray()[:, :, ch, 8:, :]
         return im_frame
 
     def load_channel(all_tifs, ch):
@@ -95,7 +95,9 @@ def reader_function(path):
 
     im_tuples = []
     if num_channels == 1:
-        im_tuples.append(load_channel(data_tifs, -1))
+        im_channel, add_kwargs, layer_type = load_channel(data_tifs, -1)
+        add_kwargs['metadata'] = {'path': path, 'snouty_metadata': metadata}
+        im_tuples.append((im_channel, add_kwargs, layer_type))
     else:
         for channel in range(num_channels):
             im_tuples.append(load_channel(data_tifs, channel))
