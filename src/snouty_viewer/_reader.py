@@ -3,13 +3,11 @@ import os.path
 
 import tifffile
 import numpy as np
-from napari.utils.notifications import show_error
 
 
 def napari_get_reader(path):
     path = os.path.abspath(path)
     if not os.path.isdir(path):
-        show_error("[ERROR] Not a directory.")
         return None
     return reader_function
 
@@ -31,6 +29,8 @@ def reader_function(path):
     metadata = load_metadata(metadata_path)
 
     data_tifs = glob.glob(os.path.join(data_path, '*.tif'))
+    if not isinstance(data_tifs, list):
+        data_tifs = [data_tifs]
     data_tifs.sort()
 
     num_buffers = len(data_tifs)
@@ -39,29 +39,32 @@ def reader_function(path):
         xy_shape = tif.pages[0].shape
         im_dtype = tif.pages[0].dtype
 
-    num_volumes = int(metadata['volumes_per_buffer']) * num_buffers
-    print("[INFO] Number of volumes: ", num_volumes)
+    vols_per_buffer = int(metadata['volumes_per_buffer'])
+    num_volumes = vols_per_buffer * num_buffers
+    # print("[INFO] Number of volumes: ", num_volumes)
     channel_str = metadata['channels_per_slice']
     num_channels = len(channel_str.rsplit(','))
-    print("[INFO] Number of channels: ", num_channels)
-    # num_channels = metadata['channels']
+    # print("[INFO] Number of channels: ", num_channels)
     num_z = int(metadata['slices_per_volume'])
-    print("[INFO] Number of slices: ", num_z)
+    # print("[INFO] Number of slices: ", num_z)
 
     im_shape = (num_volumes, num_z, xy_shape[0]-8, xy_shape[1])
+    print(im_shape)
 
     def load_tif(im_path, ch):
         with tifffile.TiffFile(im_path) as tif_frame:
             if ch == -1:
-                im_frame = tif_frame.asarray()[:, 8:, :]
+                im_frame = tif_frame.asarray()[..., 8:, :]
             else:
-                im_frame = tif_frame.asarray()[:, :, ch, 8:, :]
+                im_frame = tif_frame.asarray()[..., ch, 8:, :]
         return im_frame
 
     def load_channel(all_tifs, ch):
         im_channel = np.zeros(shape=im_shape, dtype=im_dtype)
         for idx, tif_frame in enumerate(all_tifs):
-            im_channel[idx, ...] = load_tif(tif_frame, ch)
+            start = vols_per_buffer * idx
+            end = start + vols_per_buffer
+            im_channel[start:end, ...] = load_tif(tif_frame, ch)
         layer_type = "image"
         layer_name = path.rsplit(os.sep)[-1]
         if ch == -1:

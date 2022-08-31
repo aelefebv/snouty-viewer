@@ -17,5 +17,6 @@ def native_view(im: "napari.layers.Image") -> "napari.types.LayerDataTuple":  # 
         deshear_shift = int(np.rint(z * scan_step_size_px))
         im_desheared[:, z, deshear_shift:(deshear_shift + num_y), :] = im.data[:, z, :, :]
     layer_tuple = (im_desheared, {"name": "native-" + im.name}, "image")
+    im.visible = False
     return layer_tuple
 
