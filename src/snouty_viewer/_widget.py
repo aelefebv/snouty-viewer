@@ -1,10 +1,6 @@
-from typing import TYPE_CHECKING
-
+import napari
 import numpy as np
 from magicgui import magic_factory
-
-if TYPE_CHECKING:
-    import napari
 
 
 @magic_factory
