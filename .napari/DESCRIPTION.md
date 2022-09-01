@@ -30,7 +30,7 @@ embedding feature.
 
 1. Push your `DESCRIPTION.md` to GitHub on your repository (this can also be done
 as part of a Pull Request)
-2. Edit `.napari/DESCRIPTION.md` **on GitHub**.
+2. Edit `.napari/DESCRIPTION.md` **on GitH ub**.
 3. Drag and drop your video into its desired location. It will be uploaded and
 hosted on GitHub for you, but will not be placed in your repository.
 4. We will take the resolved link to the video and render it on the hub.
@@ -89,4 +89,40 @@ Many plugins may be used in the course of published (or publishable) research, a
 during conference talks and other public facing events. If you'd like to be cited in
 a particular format, or have a DOI you'd like used, you should provide that information here. -->
 
-The developer has not yet provided a napari-hub specific description.
+## Description
+Easy to use plugin for opening raw Snouty files and converting them to native view.
+
+![Example](https://i.imgur.com/VirE5DM.gif)
+
+## Intended Audience & Supported Data
+This plugin is intended for those using a SOLS (Snouty) microscope collected via
+[Alfred Millett-Sikking's code](https://github.com/amsikking/SOLS_microscope).
+
+This plugin accepts a folder with at least subdirectories of data and metadata as an input.
+The metadata must have a 000000.txt file for the metadata to be properly parsed.
+
+## Quickstart
+
+### Getting the plugin working
+1. pip install snouty-viewer (within a virtual environment of Python 3.8, 3.9, or 3.10 recommended)
+2. Open up napari
+
+### Viewing raw Snouty data
+- Drag and drop a root folder of your Snouty data. This is the folder that includes the data and metadata subfolders.
+
+### Converting raw Snouty data to its native view
+1. Click plugins, snouty-viewer: Native View
+2. Select the file you want to convert
+3. Press Run
+
+### Saving your native view file
+1. Select the file you want to save
+2. File > Save Selected Layer(s)...
+3. Select where you want to save your file
+4. Write your file name (recommended to end in .tif)
+5. Save
+6. Wait (this could take a few minutes depending on your file's size)
+
+## Getting Help
+- Open up an issue on [GitHub](https://github.com/aelefebv/snouty-viewer/issues).
+- Start a thread on [image.sc](https://forum.image.sc/)

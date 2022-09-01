@@ -3,7 +3,7 @@
 [![License MIT](https://img.shields.io/pypi/l/snouty-viewer.svg?color=green)](https://github.com/aelefebv/snouty-viewer/raw/main/LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/snouty-viewer.svg?color=green)](https://pypi.org/project/snouty-viewer)
 [![Python Version](https://img.shields.io/pypi/pyversions/snouty-viewer.svg?color=green)](https://python.org)
-[![tests](https://github.com/aelefebv/snouty-viewer/workflows/tests/badge.svg)](https://github.com/aelefebv/snouty-viewer/actions)
+[![tests](https://github.com/aelefebv/snouty-viewer/workflows/tests/badge.svg)](https://github.com/aelefebv/snouty-viewer/actions/workflows/test_and_deploy.yml)
 [![codecov](https://codecov.io/gh/aelefebv/snouty-viewer/branch/main/graph/badge.svg)](https://codecov.io/gh/aelefebv/snouty-viewer)
 [![napari hub](https://img.shields.io/endpoint?url=https://api.napari-hub.org/shields/snouty-viewer)](https://napari-hub.org/plugins/snouty-viewer)
 
