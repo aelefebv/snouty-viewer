@@ -21,7 +21,7 @@ The metadata must have a 000000.txt file for the metadata to be properly parsed.
 
 ## Quickstart
 
-### A. Getting the plugin working
+### A. Getting the plugin working (choose either a or b, you don't have to do both)
 #### a. Through pip-install:
 1. pip install snouty-viewer (within a virtual environment of Python 3.8, 3.9, or 3.10 recommended)
 2. Open up napari
