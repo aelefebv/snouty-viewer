@@ -47,7 +47,6 @@ def reader_function(path):
     # print("[INFO] Number of slices: ", num_z)
 
     im_shape = (num_volumes, num_z, xy_shape[0] - 8, xy_shape[1])
-    print(im_shape)
 
     def load_tif(im_path, ch):
         with tifffile.TiffFile(im_path) as tif_frame:
@@ -69,13 +68,16 @@ def reader_function(path):
             name = layer_name
         else:
             name = f"ch{ch}_" + layer_name
-        add_kwargs = {"name": name}
+        add_kwargs = {
+            "name": name,
+            "metadata": {"path": path, "snouty_metadata": metadata},
+        }
         return im_channel, add_kwargs, layer_type
 
     im_tuples = []
     if num_channels == 1:
         im_channel, add_kwargs, layer_type = load_channel(data_tifs, -1)
-        add_kwargs["metadata"] = {"path": path, "snouty_metadata": metadata}
+        # add_kwargs["metadata"] = {"path": path, "snouty_metadata": metadata}
         im_tuples.append((im_channel, add_kwargs, layer_type))
     else:
         for channel in range(num_channels):
