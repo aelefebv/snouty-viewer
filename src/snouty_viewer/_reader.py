@@ -75,6 +75,7 @@ def reader_function(path):
         return im_channel, add_kwargs, layer_type
 
     im_tuples = []
+
     if num_channels == 1:
         im_channel, add_kwargs, layer_type = load_channel(data_tifs, -1)
         im_tuples.append((im_channel, add_kwargs, layer_type))
