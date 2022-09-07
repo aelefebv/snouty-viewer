@@ -34,6 +34,7 @@ The metadata must have a 000000.txt file for the metadata to be properly parsed.
 
 ### B. Viewing raw Snouty data
 - Drag and drop a root folder of your Snouty data. This is the folder that includes the data and metadata subfolders.
+- Select "Snouty Viewer" for opening.
 
 ### C. Converting raw Snouty data to its native view
 1. Click plugins, snouty-viewer: Native View
