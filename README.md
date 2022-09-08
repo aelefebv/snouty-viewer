@@ -17,7 +17,6 @@ This plugin is intended for those using a SOLS (Snouty) microscope collected via
 [Alfred Millett-Sikking's code](https://github.com/amsikking/SOLS_microscope).
 
 This plugin accepts a folder with at least subdirectories of data and metadata as an input.
-The metadata must have a 000000.txt file for the metadata to be properly parsed.
 
 ## Quickstart
 

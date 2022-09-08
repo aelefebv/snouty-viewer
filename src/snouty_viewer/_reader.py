@@ -24,7 +24,9 @@ def load_metadata(metadata_path):
 
 def reader_function(path):
     data_path = os.path.join(path, "data")
-    metadata_path = os.path.join(path, "metadata", "000000.txt")
+    metadata_dir = os.path.join(path, "metadata")
+    metadata_files = glob.glob(os.path.join(metadata_dir, "*.txt"))
+    metadata_path = metadata_files[0]
 
     metadata = load_metadata(metadata_path)
 
@@ -41,7 +43,7 @@ def reader_function(path):
     num_volumes = vols_per_buffer * num_buffers
     # print("[INFO] Number of volumes: ", num_volumes)
     channel_str = metadata["channels_per_slice"]
-    num_channels = len(channel_str.rsplit(","))
+    num_channels = len(channel_str.rsplit(" "))
     # print("[INFO] Number of channels: ", num_channels)
     num_z = int(metadata["slices_per_volume"])
     # print("[INFO] Number of slices: ", num_z)
