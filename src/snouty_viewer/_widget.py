@@ -24,6 +24,7 @@ def native_view(
     )
     for z in range(num_z):
         deshear_shift = int(np.rint(z * scan_step_size_px))
+
         if dims == 4:
             im_desheared[
                 :, z, deshear_shift : (deshear_shift + num_y), :
