@@ -1,93 +1,11 @@
+# snouty-viewer
 
-
-<!-- This file is designed to provide you with a starting template for documenting
-the functionality of your plugin. Its content will be rendered on your plugin's
-napari hub page.
-
-The sections below are given as a guide for the flow of information only, and
-are in no way prescriptive. You should feel free to merge, remove, add and
-rename sections at will to make this document work best for your plugin.
-
-## Description
-
-This should be a detailed description of the context of your plugin and its
-intended purpose.
-
-If you have videos or screenshots of your plugin in action, you should include them
-here as well, to make them front and center for new users.
-
-You should use absolute links to these assets, so that we can easily display them
-on the hub. The easiest way to include a video is to use a GIF, for example hosted
-on imgur. You can then reference this GIF as an image.
-
-![Example GIF hosted on Imgur](https://i.imgur.com/A5phCX4.gif)
-
-Note that GIFs larger than 5MB won't be rendered by GitHub - we will however,
-render them on the napari hub.
-
-The other alternative, if you prefer to keep a video, is to use GitHub's video
-embedding feature.
-
-1. Push your `DESCRIPTION.md` to GitHub on your repository (this can also be done
-as part of a Pull Request)
-2. Edit `.napari/DESCRIPTION.md` **on GitH ub**.
-3. Drag and drop your video into its desired location. It will be uploaded and
-hosted on GitHub for you, but will not be placed in your repository.
-4. We will take the resolved link to the video and render it on the hub.
-
-Here is an example of an mp4 video embedded this way.
-
-https://user-images.githubusercontent.com/17995243/120088305-6c093380-c132-11eb-822d-620e81eb5f0e.mp4
-
-## Intended Audience & Supported Data
-
-This section should describe the target audience for this plugin (any knowledge,
-skills and experience required), as well as a description of the types of data
-supported by this plugin.
-
-Try to make the data description as explicit as possible, so that users know the
-format your plugin expects. This applies both to reader plugins reading file formats
-and to function/dock widget plugins accepting layers and/or layer data.
-For example, if you know your plugin only works with 3D integer data in "tyx" order,
-make sure to mention this.
-
-If you know of researchers, groups or labs using your plugin, or if it has been cited
-anywhere, feel free to also include this information here.
-
-## Quickstart
-
-This section should go through step-by-step examples of how your plugin should be used.
-Where your plugin provides multiple dock widgets or functions, you should split these
-out into separate subsections for easy browsing. Include screenshots and videos
-wherever possible to elucidate your descriptions.
-
-Ideally, this section should start with minimal examples for those who just want a
-quick overview of the plugin's functionality, but you should definitely link out to
-more complex and in-depth tutorials highlighting any intricacies of your plugin, and
-more detailed documentation if you have it.
-
-## Additional Install Steps (uncommon)
-We will be providing installation instructions on the hub, which will be sufficient
-for the majority of plugins. They will include instructions to pip install, and
-to install via napari itself.
-
-Most plugins can be installed out-of-the-box by just specifying the package requirements
-over in `setup.cfg`. However, if your plugin has any more complex dependencies, or
-requires any additional preparation before (or after) installation, you should add
-this information here.
-
-## Getting Help
-
-This section should point users to your preferred support tools, whether this be raising
-an issue on GitHub, asking a question on image.sc, or using some other method of contact.
-If you distinguish between usage support and bug/feature support, you should state that
-here.
-
-## How to Cite
-
-Many plugins may be used in the course of published (or publishable) research, as well as
-during conference talks and other public facing events. If you'd like to be cited in
-a particular format, or have a DOI you'd like used, you should provide that information here. -->
+[![License MIT](https://img.shields.io/pypi/l/snouty-viewer.svg?color=green)](https://github.com/aelefebv/snouty-viewer/raw/main/LICENSE)
+[![PyPI](https://img.shields.io/pypi/v/snouty-viewer.svg?color=green)](https://pypi.org/project/snouty-viewer)
+[![Python Version](https://img.shields.io/pypi/pyversions/snouty-viewer.svg?color=green)](https://python.org)
+[![tests](https://github.com/aelefebv/snouty-viewer/workflows/tests/badge.svg)](https://github.com/aelefebv/snouty-viewer/actions/workflows/test_and_deploy.yml)
+[![codecov](https://codecov.io/gh/aelefebv/snouty-viewer/branch/main/graph/badge.svg)](https://codecov.io/gh/aelefebv/snouty-viewer)
+[![napari hub](https://img.shields.io/endpoint?url=https://api.napari-hub.org/shields/snouty-viewer)](https://napari-hub.org/plugins/snouty-viewer)
 
 ## Description
 Easy to use plugin for opening raw Snouty files and converting them to native view.
@@ -99,31 +17,94 @@ This plugin is intended for those using a SOLS (Snouty) microscope collected via
 [Alfred Millett-Sikking's code](https://github.com/amsikking/SOLS_microscope).
 
 This plugin accepts a folder with at least subdirectories of data and metadata as an input.
-The metadata must have a 000000.txt file for the metadata to be properly parsed.
 
 ## Quickstart
 
-### Getting the plugin working
+### A. Getting the plugin working (choose either a or b, you don't have to do both)
+#### a. Through pip-install:
 1. pip install snouty-viewer (within a virtual environment of Python 3.8, 3.9, or 3.10 recommended)
 2. Open up napari
+#### b. Through Napari:
+1. Open up napari
+2. Plugins > Install/Uninstall plugins
+3. Search for "snouty-viewer"
+4. Install
+5. (Maybe need to) reopen napari
 
-### Viewing raw Snouty data
+### B. Viewing raw Snouty data
 - Drag and drop a root folder of your Snouty data. This is the folder that includes the data and metadata subfolders.
 - Select "Snouty Viewer" for opening.
 
-### Converting raw Snouty data to its native view
+### C. Converting raw Snouty data to its native view
 1. Click plugins, snouty-viewer: Native View
 2. Select the file you want to convert
-3. Press Run
+3. Press Deskew
 
-### Saving your native view file
-1. Select the file you want to save
+### D. Saving your native view file
+1. Select the channel (or multi-channel) layer you want to save
 2. File > Save Selected Layer(s)...
 3. Select where you want to save your file
-4. Write your file name (recommended to end in .tif)
-5. Save
+4. Title your file, ".ome.tif" will automatically be appended.
+5. Save with "Snouty Writer"
 6. Wait (this could take a few minutes depending on your file's size)
 
 ## Getting Help
 - Open up an issue on [GitHub](https://github.com/aelefebv/snouty-viewer/issues).
 - Start a thread on [image.sc](https://forum.image.sc/)
+
+----------------------------------
+
+This [napari] plugin was generated with [Cookiecutter] using [@napari]'s [cookiecutter-napari-plugin] template.
+
+<!--
+Don't miss the full getting started guide to set up your new package:
+https://github.com/napari/cookiecutter-napari-plugin#getting-started
+
+and review the napari docs for plugin developers:
+https://napari.org/plugins/index.html
+-->
+
+## Installation
+
+You can install `snouty-viewer` via [pip]:
+
+    pip install snouty-viewer
+
+
+
+To install latest development version :
+
+    pip install git+https://github.com/aelefebv/snouty-viewer.git
+
+
+## Contributing
+
+Contributions are very welcome. Tests can be run with [tox], please ensure
+the coverage at least stays the same before you submit a pull request.
+
+## License
+
+Distributed under the terms of the [MIT] license,
+"snouty-viewer" is free and open source software
+
+## Issues
+
+If you encounter any problems, please [file an issue] along with a detailed description.
+
+[napari]: https://github.com/napari/napari
+[Cookiecutter]: https://github.com/audreyr/cookiecutter
+[@napari]: https://github.com/napari
+[MIT]: http://opensource.org/licenses/MIT
+[BSD-3]: http://opensource.org/licenses/BSD-3-Clause
+[GNU GPL v3.0]: http://www.gnu.org/licenses/gpl-3.0.txt
+[GNU LGPL v3.0]: http://www.gnu.org/licenses/lgpl-3.0.txt
+[Apache Software License 2.0]: http://www.apache.org/licenses/LICENSE-2.0
+[Mozilla Public License 2.0]: https://www.mozilla.org/media/MPL/2.0/index.txt
+[cookiecutter-napari-plugin]: https://github.com/napari/cookiecutter-napari-plugin
+
+[file an issue]: https://github.com/aelefebv/snouty-viewer/issues
+
+[napari]: https://github.com/napari/napari
+[tox]: https://tox.readthedocs.io/en/latest/
+[pip]: https://pypi.org/project/pip/
+[PyPI]: https://pypi.org/

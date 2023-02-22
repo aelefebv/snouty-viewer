@@ -18,7 +18,7 @@ contributions:
   writers:
     - command: snouty-viewer.write_single_image
       layer_types: ['image']
-      filename_extensions: ['.tif']
+      filename_extensions: ['.ome.tif']
   widgets:
     - command: snouty-viewer.get_native_view
       display_name: Native View

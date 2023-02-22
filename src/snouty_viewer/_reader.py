@@ -67,11 +67,15 @@ def reader_function(path):
     loaded_im = np.zeros(shape=im_shape, dtype=im_dtype)
     for ch_num in range(num_channels):
         loaded_im[:, ch_num, ...] = load_channel(data_tifs, ch_num)
+    px_size = float(metadata["sample_px_um"])
+    z_px_size = px_size * float(metadata["voxel_aspect_ratio"])
+    scale = (z_px_size, px_size, px_size)
     layer_type = "image"
     name = path.rsplit(os.sep)[-1]
     add_kwargs = {
         "name": name,
         "metadata": {"path": path, "snouty_metadata": metadata},
+        "scale": scale,
     }
     im_tuple = [(loaded_im, add_kwargs, layer_type)]
     return im_tuple

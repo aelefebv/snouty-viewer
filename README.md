@@ -38,14 +38,14 @@ This plugin accepts a folder with at least subdirectories of data and metadata a
 ### C. Converting raw Snouty data to its native view
 1. Click plugins, snouty-viewer: Native View
 2. Select the file you want to convert
-3. Press Run
+3. Press Deskew
 
 ### D. Saving your native view file
-1. Select the file you want to save
+1. Select the channel (or multi-channel) layer you want to save
 2. File > Save Selected Layer(s)...
 3. Select where you want to save your file
-4. Write your file name (recommended to end in .tif)
-5. Save
+4. Title your file, ".ome.tif" will automatically be appended.
+5. Save with "Snouty Writer"
 6. Wait (this could take a few minutes depending on your file's size)
 
 ## Getting Help

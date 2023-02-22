@@ -7,19 +7,10 @@ import numpy as np
 from magicgui import magic_factory
 
 
-@magic_factory
+@magic_factory(call_button="Deskew")
 def native_view(
     im: "napari.layers.Image",
 ) -> List[napari.types.LayerDataTuple]:
-    # a little bigger than traditional view, but much faster
-
-    # try:
-    #     num_t, num_z, num_y, num_x = im.data.shape
-    #     dims = 4
-    # except ValueError:
-    #     num_t = 1
-    #     dims = 3
-    #     num_z, num_y, num_x = im.data.shape
     num_t, num_c, num_z, num_y, num_x = im.data.shape
     scan_step_size_px = int(
         im.metadata["snouty_metadata"]["scan_step_size_px"]
@@ -28,6 +19,11 @@ def native_view(
     im_desheared = np.zeros(
         (num_t, num_c, num_z, num_y + max_deshear_shift, num_x), im.dtype
     )
+    px_size = float(im.metadata["snouty_metadata"]["sample_px_um"])
+    z_px_size = px_size * float(
+        im.metadata["snouty_metadata"]["voxel_aspect_ratio"]
+    )
+    scale = (z_px_size, px_size, px_size)
 
     def deshear_channel(ch_num):
         desheard_ch = np.zeros(
@@ -38,14 +34,6 @@ def native_view(
             desheard_ch[
                 :, 0, z, deshear_shift : (deshear_shift + num_y), :
             ] = im.data[:, ch_num, z, :, :]
-            # if dims == 4:
-            # im_desheared[
-            #     :, ch_num, z, deshear_shift:(deshear_shift + num_y), :
-            # ] = im.data[:, ch_num, z, :, :]
-            # else:
-            #     im_desheared[
-            #         :, z, deshear_shift : (deshear_shift + num_y), :
-            #     ] = im.data[z, :, :]]
         return desheard_ch
 
     wavelengths = ast.literal_eval(
@@ -82,6 +70,7 @@ def native_view(
                     "blending": "additive",
                     "colormap": color,
                     "metadata": im.metadata,
+                    "scale": scale,
                 },
                 "image",
             )
@@ -95,12 +84,10 @@ def native_view(
                     "name": f"multichannel-{im.name}",
                     "visible": False,
                     "metadata": im.metadata,
+                    "scale": scale,
                 },
                 "image",
             ),
         )
-    # todo things are different with 1 ch vs multiple
-    # layer_tuple = (im_desheared, {"name": "native-" + im.name}, "image")
     im.visible = False
-    # todo remove im
     return layer_tuples
