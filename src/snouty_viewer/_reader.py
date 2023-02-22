@@ -41,46 +41,37 @@ def reader_function(path):
 
     vols_per_buffer = int(metadata["volumes_per_buffer"])
     num_volumes = vols_per_buffer * num_buffers
-    # print("[INFO] Number of volumes: ", num_volumes)
     channel_str = metadata["channels_per_slice"]
     num_channels = len(channel_str.rsplit(" "))
-    # print("[INFO] Number of channels: ", num_channels)
     num_z = int(metadata["slices_per_volume"])
-    # print("[INFO] Number of slices: ", num_z)
 
-    im_shape = (num_volumes, num_z, xy_shape[0] - 8, xy_shape[1])
+    im_shape = (num_volumes, num_channels, num_z, xy_shape[0] - 8, xy_shape[1])
 
     def load_tif(im_path, ch):
-        with tifffile.TiffFile(im_path) as tif_frame:
-            if ch == -1:
-                im_frame = tif_frame.asarray()[..., 8:, :]
-            else:
-                im_frame = tif_frame.asarray()[..., ch, 8:, :]
+        if num_channels == 1:
+            im_frame = tifffile.memmap(im_path)[..., 8:, :]
+        else:
+            im_frame = tifffile.memmap(im_path)[..., ch, 8:, :]
         return im_frame
 
     def load_channel(all_tifs, ch):
-        im_channel = np.zeros(shape=im_shape, dtype=im_dtype)
+        im_channel = np.zeros(
+            shape=(im_shape[0],) + (im_shape[2:]), dtype=im_dtype
+        )
         for idx, tif_frame in enumerate(all_tifs):
             start = vols_per_buffer * idx
             end = start + vols_per_buffer
             im_channel[start:end, ...] = load_tif(tif_frame, ch)
-        layer_type = "image"
-        layer_name = path.rsplit(os.sep)[-1]
-        if ch == -1:
-            name = layer_name
-        else:
-            name = f"ch{ch}_" + layer_name
-        add_kwargs = {
-            "name": name,
-            "metadata": {"path": path, "snouty_metadata": metadata},
-        }
-        return im_channel, add_kwargs, layer_type
+        return im_channel
 
-    im_tuples = []
-    if num_channels == 1:
-        im_channel, add_kwargs, layer_type = load_channel(data_tifs, -1)
-        im_tuples.append((im_channel, add_kwargs, layer_type))
-    else:
-        for channel in range(num_channels):
-            im_tuples.append(load_channel(data_tifs, channel))
-    return im_tuples
+    loaded_im = np.zeros(shape=im_shape, dtype=im_dtype)
+    for ch_num in range(num_channels):
+        loaded_im[:, ch_num, ...] = load_channel(data_tifs, ch_num)
+    layer_type = "image"
+    name = path.rsplit(os.sep)[-1]
+    add_kwargs = {
+        "name": name,
+        "metadata": {"path": path, "snouty_metadata": metadata},
+    }
+    im_tuple = [(loaded_im, add_kwargs, layer_type)]
+    return im_tuple
