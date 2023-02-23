@@ -7,6 +7,7 @@ import napari.types
 import numpy as np
 from magicgui import magic_factory
 
+from snouty_viewer._writer import write_single_image
 from snouty_viewer.im_loader import ImPathInfo, load_full
 
 
@@ -161,7 +162,7 @@ def list_subdirectories(path):
 
 @magic_factory(call_button="Deskew and save")
 def batch_deskew_and_save(
-    path: str, show_deskewed_ims: bool = False
+    path: str, show_deskewed_ims: bool = False, auto_save: bool = True
 ) -> Union[List[napari.types.LayerDataTuple], None]:
     snouty_dirs = list_subdirectories(path)
     tuple_list = []
@@ -172,6 +173,13 @@ def batch_deskew_and_save(
         im_info.deshear_all_channels(batch=True, show_multi=show_deskewed_ims)
         if show_deskewed_ims:
             tuple_list.append(im_info.displayed_images[0])
+        if auto_save:
+            save_path = os.path.join(
+                snouty_dir, f"deskewed-{im_info.name}.ome.tif"
+            )
+            attributes = {"metadata": im_info.metadata}
+            write_single_image(save_path, im_info.im_desheared, attributes)
+
     if show_deskewed_ims:
         return tuple_list
     return None
