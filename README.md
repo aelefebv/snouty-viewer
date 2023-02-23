@@ -36,7 +36,7 @@ This plugin accepts a folder with at least subdirectories of data and metadata a
 - Select "Snouty Viewer" for opening.
 
 ### C. Converting raw Snouty data to its native view
-1. Click plugins, snouty-viewer: Native View
+1. Click plugins, snouty-viewer -> Native View
 2. Select the file you want to convert
 3. Press Deskew
 
@@ -46,8 +46,15 @@ This plugin accepts a folder with at least subdirectories of data and metadata a
 3. Select where you want to save your file
 4. Title your file, ".ome.tif" will automatically be appended.
 5. Save with "Snouty Writer"
-6. Wait (this could take a few minutes depending on your file's size)
+6. Wait (this could take a few minutes depending on your file's size and your hardware)
 
+### E. Batch saving
+1. Click plugins, snouty-viewer -> Batch Deskew & Save
+2. Input a directory (without quotes) that contains 1 or more Snouty-acquired directories.
+3. If you want to view your deskewed outputs, check the box.
+4. If you want to automatically save the deskewed outputs, check the box.
+5. Press Deskew and save
+6. Wait (this could take a few minutes depending on your files' sizes and your hardware)
 ## Getting Help
 - Open up an issue on [GitHub](https://github.com/aelefebv/snouty-viewer/issues).
 - Start a thread on [image.sc](https://forum.image.sc/)
