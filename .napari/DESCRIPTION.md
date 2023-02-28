@@ -10,6 +10,10 @@
 ## Description
 Easy to use plugin for opening raw Snouty files and converting them to native view.
 
+Allows for saving to ome.tif files with corresponding OME-XML based metadata.
+
+Also allows for bulk deskewing and saving directories.
+
 ![Example](https://i.imgur.com/VirE5DM.gif)
 
 ## Intended Audience & Supported Data
