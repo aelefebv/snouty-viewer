@@ -1,7 +1,9 @@
 import glob
 import os
+from typing import Type, Union
 
 import numpy as np
+import ome_types
 import tifffile
 
 
@@ -39,6 +41,44 @@ class ImPathInfo:
             self.xy_shape[0] - 8,
             self.xy_shape[1],
         )
+        self.axes = "TCZYX"
+
+
+def allocate_memory_return_memmap(
+    axes,
+    shape,
+    snouty_metadata,
+    save_path: str,
+    dtype: Union[Type, str] = "float",
+):
+    tifffile.imwrite(
+        save_path,
+        shape=shape,
+        dtype=dtype,
+        bigtiff=True,
+        metadata={"axes": axes},
+    )
+    ome_xml = tifffile.tiffcomment(save_path)
+    ome = ome_types.from_xml(ome_xml, parser="lxml")
+    delay = snouty_metadata["delay_s"]
+    if delay is None or delay == "None":
+        delay = 0.0
+    else:
+        delay = float(delay)
+    vps = float(snouty_metadata["volumes_per_s"])
+    px_size = float(snouty_metadata["sample_px_um"])
+    ome.images[0].pixels.physical_size_x = px_size
+    ome.images[0].pixels.physical_size_y = px_size
+    ome.images[0].pixels.physical_size_z = px_size * float(
+        snouty_metadata["voxel_aspect_ratio"]
+    )
+    ome.images[0].pixels.time_increment = vps + delay
+    ome.images[0].description = snouty_metadata["description"]
+    # ome.images[0].pixels.type = dtype
+    # note: numpy uses 8 bits as smallest, so 'bit' type does nothing for bool.
+    ome_xml = ome.to_xml()
+    tifffile.tiffcomment(save_path, ome_xml)
+    return tifffile.memmap(save_path, mode="r+")
 
 
 def load_channel(im_path_info, ch):
@@ -55,17 +95,27 @@ def load_channel(im_path_info, ch):
     return im_channel
 
 
-def load_full(im_path_info):
-    loaded_im = np.zeros(
-        shape=im_path_info.im_shape, dtype=im_path_info.im_dtype
+def load_full(im_path_info: ImPathInfo, path_out):
+    name = im_path_info.path.rsplit(os.sep)[-1]
+    save_path = os.path.join(path_out, f"skewed-{name}.ome.tif")
+    skewed_memmap = allocate_memory_return_memmap(
+        im_path_info.axes,
+        im_path_info.im_shape,
+        im_path_info.metadata,
+        save_path,
+        im_path_info.im_dtype,
     )
     for ch_num in range(im_path_info.num_channels):
-        loaded_im[:, ch_num, ...] = load_channel(im_path_info, ch_num)
+        if im_path_info.num_channels > 1:
+            skewed_memmap[:, ch_num, ...] = load_channel(im_path_info, ch_num)
+            # ch_desheared = ch_desheared[:, ...]
+        else:
+            # self.im_desheared = ch_desheared
+            skewed_memmap = load_channel(im_path_info, ch_num)
     px_size = float(im_path_info.metadata["sample_px_um"])
     z_px_size = px_size * float(im_path_info.metadata["voxel_aspect_ratio"])
     scale = (z_px_size, px_size, px_size)
     layer_type = "image"
-    name = im_path_info.path.rsplit(os.sep)[-1]
     add_kwargs = {
         "name": name,
         "metadata": {
@@ -74,15 +124,15 @@ def load_full(im_path_info):
         },
         "scale": scale,
     }
-    im_tuple = [(loaded_im, add_kwargs, layer_type)]
+    im_tuple = [(skewed_memmap, add_kwargs, layer_type)]
     return im_tuple
 
 
 def load_tif(im_path, ch, num_channels=1):
     if num_channels == 1:
-        im_frame = tifffile.memmap(im_path)[..., 8:, :]
+        im_frame = tifffile.memmap(im_path, mode="r")[..., 8:, :]
     else:
-        im_frame = tifffile.memmap(im_path)[..., ch, 8:, :]
+        im_frame = tifffile.memmap(im_path, mode="r")[..., ch, 8:, :]
     return im_frame
 
 
