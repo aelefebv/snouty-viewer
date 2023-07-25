@@ -225,6 +225,7 @@ def batch_deskew_and_save(
         skewed_memmap = PseudoImage(load_full(im_path_info, path_out)[0])
         im_info = ImInfo(skewed_memmap, im_path_info.im_shape)
         name = im_path_info.path.rsplit(os.sep)[-1]
+        # skewed_memmap_path = os.path.join(path_out, f"skewed-{name}.ome.tif")
         save_path = os.path.join(path_out, f"deskewed-{name}.ome.tif")
         deskewed_memmap = allocate_memory_return_memmap(
             "TCZYX",
@@ -243,7 +244,7 @@ def batch_deskew_and_save(
         #     )
         #     attributes = {"metadata": im_info.metadata}
         #     write_single_image(save_path, im_info.im_desheared, attributes)
-
+        # os.remove(skewed_memmap_path)
     if show_deskewed_ims:
         return tuple_list
     return None
