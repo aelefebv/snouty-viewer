@@ -1,4 +1,3 @@
-import glob
 import os
 from typing import Type, Union
 
@@ -12,14 +11,20 @@ class ImPathInfo:
         self.path = path
         self.data_path = os.path.join(path, "data")
         self.metadata_dir = os.path.join(path, "metadata")
-        self.metadata_files = glob.glob(
-            os.path.join(self.metadata_dir, "*.txt")
-        )
+        metadata_files = [
+            f for f in os.listdir(self.metadata_dir) if f.endswith(".txt")
+        ]
+        self.metadata_files = [
+            os.path.join(self.metadata_dir, f) for f in metadata_files
+        ]
         self.metadata_path = self.metadata_files[0]
 
         self.metadata = load_metadata(self.metadata_path)
 
-        self.data_tifs = glob.glob(os.path.join(self.data_path, "*.tif"))
+        data_tifs = [
+            f for f in os.listdir(self.data_path) if f.endswith(".tif")
+        ]
+        self.data_tifs = [os.path.join(self.data_path, f) for f in data_tifs]
         self.data_tifs.sort()
 
         self.num_buffers = len(self.data_tifs)

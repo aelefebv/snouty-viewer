@@ -62,12 +62,3 @@ def process_subdir(subdir, new_directory):
                             timepoint_directories[timepoint], folder, file
                         ),
                     )
-
-
-if __name__ == "__main__":
-    dir_name = r"""
-    \\zfsdata02\SOLS_v1.1-ro\Miguel_deJesus\MDJ_IMG04\IMG04A_20230720\A[6]_1_untreated_BODIPY10kX
-    """
-
-    # Call the function with the directory to process
-    process_directory(dir_name, r"D:\test_files\miguel-positions")
