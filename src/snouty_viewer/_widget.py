@@ -7,6 +7,7 @@ import napari.types
 import numpy as np
 from magicgui import magic_factory
 
+from scripts.split_positions import process_directory
 from snouty_viewer.im_loader import (
     ImPathInfo,
     allocate_memory_return_memmap,
@@ -207,6 +208,17 @@ def list_subdirectories(path):
         )
     ]
     return snouty_subdirectories
+
+
+@magic_factory(call_button="Position extraction")
+def position_extraction(
+    path_in: str,
+    path_out: str = "",
+) -> None:
+    if path_out == "":
+        path_out = path_in
+    process_directory(path_in, path_out)
+    return None
 
 
 @magic_factory(call_button="Deskew and save")

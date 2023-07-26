@@ -14,6 +14,9 @@ contributions:
     - id: snouty-viewer.batch_deskew_and_save
       python_name: snouty_viewer._widget:batch_deskew_and_save
       title: Batch deskew and save a directory of Snouty-acquired subdirectories
+    - id: snouty-viewer.position_extraction
+      python_name: snouty_viewer._widget:position_extraction
+      title: Extract positions from a directory of Snouty-acquired subdirectories
   readers:
     - command: snouty-viewer.get_reader
       accepts_directories: true
@@ -27,3 +30,5 @@ contributions:
       display_name: Native View
     - command: snouty-viewer.batch_deskew_and_save
       display_name: Batch Deskew & Save
+    - command: snouty-viewer.position_extraction
+      display_name: Position Extraction
