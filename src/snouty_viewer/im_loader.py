@@ -112,7 +112,12 @@ def load_full(im_path_info: ImPathInfo, path_out):
     )
     for ch_num in range(im_path_info.num_channels):
         if im_path_info.num_channels > 1:
-            skewed_memmap[:, ch_num, ...] = load_channel(im_path_info, ch_num)
+            if im_path_info.num_volumes > 1:
+                skewed_memmap[:, ch_num, ...] = load_channel(
+                    im_path_info, ch_num
+                )
+            else:
+                skewed_memmap[ch_num, ...] = load_channel(im_path_info, ch_num)
             # ch_desheared = ch_desheared[:, ...]
         else:
             # self.im_desheared = ch_desheared

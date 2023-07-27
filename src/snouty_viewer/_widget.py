@@ -105,6 +105,8 @@ class ImInfo:
     #     tifffile.tiffcomment(path_im, ome_xml)
 
     def _deshear_channel(self, ch_num):
+        # there's probably a more pythonic way to go about this following DRY,
+        # but whatever, it works.
         if self.num_c == 1:
             desheard_ch = self.im_desheared
             for z in range(self.num_z):
@@ -113,12 +115,20 @@ class ImInfo:
                     :, z, deshear_shift : (deshear_shift + self.num_y), :
                 ] = self.data[:, z, :, :]
         else:
-            desheard_ch = self.im_desheared[:, ch_num, :, :, :]
-            for z in range(self.num_z):
-                deshear_shift = int(np.rint(z * self.scan_step_size_px))
-                desheard_ch[
-                    :, z, deshear_shift : (deshear_shift + self.num_y), :
-                ] = self.data[:, ch_num, z, :, :]
+            if self.num_t > 1:
+                desheard_ch = self.im_desheared[:, ch_num, :, :, :]
+                for z in range(self.num_z):
+                    deshear_shift = int(np.rint(z * self.scan_step_size_px))
+                    desheard_ch[
+                        :, z, deshear_shift : (deshear_shift + self.num_y), :
+                    ] = self.data[:, ch_num, z, :, :]
+            else:
+                desheard_ch = self.im_desheared[ch_num, :, :, :]
+                for z in range(self.num_z):
+                    deshear_shift = int(np.rint(z * self.scan_step_size_px))
+                    desheard_ch[
+                        z, deshear_shift : (deshear_shift + self.num_y), :
+                    ] = self.data[ch_num, z, :, :]
         return desheard_ch
 
     def _display_image(
@@ -180,8 +190,12 @@ class ImInfo:
                 color = "magenta"
             ch_desheared = self._deshear_channel(ch)
             if self.num_c > 1:
-                self.im_desheared[:, ch, ...] = ch_desheared[:, ...]
-                ch_desheared = ch_desheared[:, ...]
+                if self.num_t > 1:
+                    self.im_desheared[:, ch, ...] = ch_desheared[:, ...]
+                    ch_desheared = ch_desheared[:, ...]
+                else:
+                    self.im_desheared[ch, ...] = ch_desheared[:, ...]
+                    ch_desheared = ch_desheared[:, ...]
             else:
                 self.im_desheared = ch_desheared
             if not batch:
