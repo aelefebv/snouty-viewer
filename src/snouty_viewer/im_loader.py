@@ -7,7 +7,7 @@ import tifffile
 
 
 class ImPathInfo:
-    def __init__(self, path):
+    def __init__(self, path, num_t=-1):
         self.path = path
         self.data_path = os.path.join(path, "data")
         self.metadata_dir = os.path.join(path, "metadata")
@@ -25,9 +25,16 @@ class ImPathInfo:
             f for f in os.listdir(self.data_path) if f.endswith(".tif")
         ]
         self.data_tifs = [os.path.join(self.data_path, f) for f in data_tifs]
-        self.data_tifs.sort()
+        # self.data_tifs.sort()
+        # sort by date
+        self.data_tifs.sort(key=os.path.getmtime)
+        if num_t != -1:
+            self.data_tifs = self.data_tifs[:num_t]
 
         self.num_buffers = len(self.data_tifs)
+
+        if self.num_buffers == 0:
+            raise ValueError(f"No tifs found in {self.data_path}")
 
         with tifffile.TiffFile(self.data_tifs[0]) as tif:
             self.xy_shape = tif.pages[0].shape
@@ -65,11 +72,22 @@ def allocate_memory_return_memmap(
     )
     ome_xml = tifffile.tiffcomment(save_path)
     ome = ome_types.from_xml(ome_xml, parser="lxml")
-    delay = snouty_metadata["delay_s"]
+    # try to get delay, if not, set to 0
+    delay = snouty_metadata.get("delay_s", None)
     if delay is None or delay == "None":
-        delay = 0.0
+        volumes_per_s = snouty_metadata.get("volumes_per_s", None)
+        buffer_time_s = snouty_metadata.get("buffer_time_s", None)
+        if volumes_per_s is not None and buffer_time_s is not None:
+            delay = float(buffer_time_s) / float(volumes_per_s)
+        else:
+            delay = 0.0
     else:
         delay = float(delay)
+    # delay = snouty_metadata["delay_s"]
+    # if delay is None or delay == "None":
+    #     delay = 0.0
+    # else:
+    #     delay = float(delay)
     vps = float(snouty_metadata["volumes_per_s"])
     px_size = float(snouty_metadata["sample_px_um"])
     ome.images[0].pixels.physical_size_x = px_size

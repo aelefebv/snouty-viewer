@@ -22,7 +22,7 @@ def process_directory(directory, output_directory=None):
 
 def process_subdir(subdir, new_directory):
     timepoint_pattern = re.compile(
-        r"timepoint(\d+)_position(\d+)_(\d+)_burst(\d+)"
+        r"(\d+)_position(\d+)_timepoint(\d+)_burst(\d+)"
     )
     timepoint_directories = {}
 
@@ -37,7 +37,7 @@ def process_subdir(subdir, new_directory):
                 # Get the file's timepoint
                 match = timepoint_pattern.match(file)
                 if match:
-                    timepoint = match.group(1)
+                    timepoint = match.group(3)
 
                     # Create the directory if it hasn't been created yet
                     if timepoint not in timepoint_directories:

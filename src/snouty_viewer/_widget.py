@@ -109,11 +109,18 @@ class ImInfo:
         # but whatever, it works.
         if self.num_c == 1:
             desheard_ch = self.im_desheared
-            for z in range(self.num_z):
-                deshear_shift = int(np.rint(z * self.scan_step_size_px))
-                desheard_ch[
-                    :, z, deshear_shift : (deshear_shift + self.num_y), :
-                ] = self.data[:, z, :, :]
+            if self.num_t > 1:
+                for z in range(self.num_z):
+                    deshear_shift = int(np.rint(z * self.scan_step_size_px))
+                    desheard_ch[
+                        :, z, deshear_shift : (deshear_shift + self.num_y), :
+                    ] = self.data[:, z, :, :]
+            else:
+                for z in range(self.num_z):
+                    deshear_shift = int(np.rint(z * self.scan_step_size_px))
+                    desheard_ch[
+                        z, deshear_shift : (deshear_shift + self.num_y), :
+                    ] = self.data[0, z, :, :]
         else:
             if self.num_t > 1:
                 desheard_ch = self.im_desheared[:, ch_num, :, :, :]
@@ -241,13 +248,15 @@ def batch_deskew_and_save(
     path_out: str = "",
     show_deskewed_ims: bool = False,
     auto_save: bool = True,
+    num_t: int = -1,
 ) -> Union[List[napari.types.LayerDataTuple], None]:
     snouty_dirs = list_subdirectories(path_in)
     tuple_list = []
     for snouty_dir in snouty_dirs:
+        # try:
         if path_out == "":
             path_out = snouty_dir
-        im_path_info = ImPathInfo(snouty_dir)
+        im_path_info = ImPathInfo(snouty_dir, num_t=num_t)
         skewed_memmap = PseudoImage(load_full(im_path_info, path_out)[0])
         im_info = ImInfo(skewed_memmap, im_path_info.im_shape)
         name = im_path_info.path.rsplit(os.sep)[-1]
@@ -271,6 +280,9 @@ def batch_deskew_and_save(
         #     attributes = {"metadata": im_info.metadata}
         #     write_single_image(save_path, im_info.im_desheared, attributes)
         # os.remove(skewed_memmap_path)
+        # except Exception as e:
+        #     print(f"Error in {snouty_dir}: {e}")
+        #     continue
     if show_deskewed_ims:
         return tuple_list
     return None
