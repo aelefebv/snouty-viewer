@@ -74,20 +74,16 @@ def allocate_memory_return_memmap(
     ome = ome_types.from_xml(ome_xml, parser="lxml")
     # try to get delay, if not, set to 0
     delay = snouty_metadata.get("delay_s", None)
-    if delay is None or delay == "None":
-        volumes_per_s = snouty_metadata.get("volumes_per_s", None)
-        buffer_time_s = snouty_metadata.get("buffer_time_s", None)
-        if volumes_per_s is not None and buffer_time_s is not None:
-            delay = float(buffer_time_s) / float(volumes_per_s)
-        else:
-            delay = 0.0
-    else:
-        delay = float(delay)
-    # delay = snouty_metadata["delay_s"]
     # if delay is None or delay == "None":
-    #     delay = 0.0
+    #     volumes_per_s = snouty_metadata.get("volumes_per_s", None)
+    #     buffer_time_s = snouty_metadata.get("buffer_time_s", None)
+    #     if volumes_per_s is not None and buffer_time_s is not None:
+    #         delay = float(buffer_time_s) / float(volumes_per_s)
+    #     else:
+    #         delay = 0.0
     # else:
     #     delay = float(delay)
+    delay = float(delay) if delay is not None else 0.0
     vps = float(snouty_metadata["volumes_per_s"])
     px_size = float(snouty_metadata["sample_px_um"])
     ome.images[0].pixels.physical_size_x = px_size
@@ -95,7 +91,7 @@ def allocate_memory_return_memmap(
     ome.images[0].pixels.physical_size_z = px_size * float(
         snouty_metadata["voxel_aspect_ratio"]
     )
-    ome.images[0].pixels.time_increment = vps + delay
+    ome.images[0].pixels.time_increment = (1 / vps) + delay
     ome.images[0].description = snouty_metadata["description"]
     # ome.images[0].pixels.type = dtype
     # note: numpy uses 8 bits as smallest, so 'bit' type does nothing for bool.
@@ -172,3 +168,10 @@ def load_metadata(metadata_path):
         split = line.split(": ")
         metadata_dict[split[0]] = split[1][:-1]
     return metadata_dict
+
+
+if __name__ == "__main__":
+    import napari
+
+    viewer = napari.Viewer()
+    napari.run()

@@ -1,34 +1,34 @@
-name: snouty-viewer
+name: snouty_viewer
 display_name: Snouty Viewer
 contributions:
   commands:
-    - id: snouty-viewer.get_reader
+    - id: snouty_viewer.get_reader
       python_name: snouty_viewer._reader:napari_get_reader
       title: Open snouty data
-    - id: snouty-viewer.write_single_image
+    - id: snouty_viewer.write_single_image
       python_name: snouty_viewer._writer:write_single_image
       title: Save deskewed Snouty data
-    - id: snouty-viewer.get_native_view
+    - id: snouty_viewer.get_native_view
       python_name: snouty_viewer._widget:native_view
       title: Convert raw snouty data to its native view
-    - id: snouty-viewer.batch_deskew_and_save
+    - id: snouty_viewer.batch_deskew_and_save
       python_name: snouty_viewer._widget:batch_deskew_and_save
       title: Batch deskew and save a directory of Snouty-acquired subdirectories
-    - id: snouty-viewer.position_extraction
+    - id: snouty_viewer.position_extraction
       python_name: snouty_viewer._widget:position_extraction
       title: Extract positions from a directory of Snouty-acquired subdirectories
   readers:
-    - command: snouty-viewer.get_reader
+    - command: snouty_viewer.get_reader
       accepts_directories: true
       filename_patterns: []
   writers:
-    - command: snouty-viewer.write_single_image
+    - command: snouty_viewer.write_single_image
       layer_types: ['image']
       filename_extensions: ['.ome.tif']
   widgets:
-    - command: snouty-viewer.get_native_view
+    - command: snouty_viewer.get_native_view
       display_name: Native View
-    - command: snouty-viewer.batch_deskew_and_save
+    - command: snouty_viewer.batch_deskew_and_save
       display_name: Batch Deskew & Save
-    - command: snouty-viewer.position_extraction
+    - command: snouty_viewer.position_extraction
       display_name: Position Extraction
